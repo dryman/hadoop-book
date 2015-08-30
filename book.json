@@ -1,3 +1,4 @@
 {
-    plugins: ["mathjax"]
+  "gitbook": "2.x.x",
+  "plugins": ["katex"]
 }

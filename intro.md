@@ -51,27 +51,50 @@
 
 ### 大數據技術架構的起源
 
-以下內容節錄並翻譯自[The history of hadoop][historyofhadoop]。
-作者有跟最早的hadoop開發者Doug Cutting求證過細節，而且得到他的背書！
+以下內容節錄並翻譯自 [The history of hadoop][historyofhadoop] 。
+原作者有跟最早的hadoop開發者 Doug Cutting 求證過細節，而且得到他的背書！
 
-1997 Lucene
-Search Engine
-2000 open sourced, 2001 moved to Apache Software Foundation
+一切源自於 Doug Cutting 在 1997 年開始的搜尋引擎專案 [Lucene](https://lucene.apache.org/core/) 。
+Lucene 在 2000 年開放原始碼，並在 2001 年變成 ASF (Apache Software Foundation)[^2] 的專案。
+直至今日，許多熱門的搜尋引擎實做 [Apache Solr](http://www.apache.org),
+[Elastic search](https://www.elastic.co) 的底層都還是使用 Lucene 。
+不過在一開始的時候 Lucene 只能搜尋很少的東西，而且也只能在一台機器上跑。
 
-End of 2001, Doug Cutting + Mike Cafarell started Apache Nutch
-for web page indexing. Suffer in scalling (100M), single machine.
+2001 年底， Doug Cutting 和 Mike Cafarell 將興趣轉向替網頁建立搜尋索引，
+並開啟了一個新的專案名為 [Apache Nutch](http://nutch.apache.org) 。
+Nutch 是網路爬蟲，使用 Nutch 爬下整個世界的網站，再使用 Lucene 建立索引進行搜尋。
+如同大部份的開發專案，一開始 Cutting 與 Cafarella 只專注於將功能寫出來，之後再最佳化。
+但是當欲建檔的網頁是全世界的時候，無法處理大數據的技術瓶頸就出現了。
+當年他們能建檔的網頁的上限是一億 (100M)，而且只能在一台三千美金的機器上面跑。
+如何處理大量的數據變成當時他們最迫切需要解決得問題。
 
-* schemaless with no predefined structure, i.e. no rigid schema with tables and columns (and column types and sizes)
-* durable once data is written it should never be lost
-* capable of handling component failure without human intervention (e.g. CPU, disk, memory, network, power supply, MB)
-* automatically rebalanced to even out disk space consumption throughout cluster
+### HDFS (Hadoop Distributed File System) 的起源
+
+為了使 Nutch 能夠處理更多資料，Cutting 與 Cafarella 開始思考多台機器的儲存方案。
+這儲存方案必須要符合以下的需求：
+
+* 不需要傳統資料庫的 schema (鷹架)
+* 一旦資料寫入系統就不需要擔心資料遺失 (durable)
+* 如果有硬體壞掉，系統會自動處理好（備份、轉移資料等）
+* 自動平衡資料負載。不需要手動將資料從一台伺服器搬到另一台去。
+
+他們花了幾個月試圖實做這些規格，不過就在 2003 年， Google 發表了一篇 Google File System paper 。
+裡面的描述恰恰好就符合他們要追求的檔案系統。
+於是在 2004 年，他們就依據這篇 paper 實做出了 Nutch Distributed File System (NDFS.)
+
+讀者可能會有疑問：為什麼不去使用當時其他的分散式檔案系統呢？
+當時已經有許多超級電腦的儲存方案，為什麼不用這些方案呢？
+筆者目前找不出完整的原因（也許要訪問 Doug Cutting吧）
+但現有的 HDFS 比其他分散式儲存系統便宜大約二十倍，而且性能更好。
+而且傳統的Xen/NAS等分散式儲存系統還需要專門的硬體及機房，
+如果當時他們使用這樣的方案也許我們就不會看到大數據業蓬勃發展了。
+
+### Map Reduce
 
 
 GFS 2003
 Google MR 2004
 
-2004 Nutch Distributed FileSystem
-1PB -> 20PB
 
 2005 MR is part of Nutch
 2006 Jan aquired into yahoo
@@ -85,7 +108,7 @@ Coudera was born.
 2009 Amazon elastic MR
 
 2010 Hortonworks
-2012 42000 nodes
+2012 Yahoo! 42000 nodes
 2012 YARN
 
 2009 UC Berkeley. 2010 open sourced, 2013 ASF. 2014 top level.
@@ -118,3 +141,4 @@ Side note: 其實hadoop其中一個很有價值的應用是做BI
 
 
 [^1]: 又另譯高延展性程式
+[^2]: Apache Software Foundation http://www.apache.org
