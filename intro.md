@@ -51,13 +51,45 @@
 
 ### 大數據技術架構的起源
 
-Nutch (later renamed as lucene in ?) 2002
-crawller + index
+以下內容節錄並翻譯自[The history of hadoop][historyofhadoop]。
+作者有跟最早的hadoop開發者Doug Cutting求證過細節，而且得到他的背書！
+
+1997 Lucene
+Search Engine
+2000 open sourced, 2001 moved to Apache Software Foundation
+
+End of 2001, Doug Cutting + Mike Cafarell started Apache Nutch
+for web page indexing. Suffer in scalling (100M), single machine.
+
+* schemaless with no predefined structure, i.e. no rigid schema with tables and columns (and column types and sizes)
+* durable once data is written it should never be lost
+* capable of handling component failure without human intervention (e.g. CPU, disk, memory, network, power supply, MB)
+* automatically rebalanced to even out disk space consumption throughout cluster
+
 
 GFS 2003
 Google MR 2004
 
-5-20 machines
+2004 Nutch Distributed FileSystem
+1PB -> 20PB
+
+2005 MR is part of Nutch
+2006 Jan aquired into yahoo
+2006 Feb, becomes hadoop
+2007 Yahoo! reported to use 1000 nodes.
+
+2008. Hadoop separated out from Lucene.
+many sub projects appears
+Coudera was born.
+
+2009 Amazon elastic MR
+
+2010 Hortonworks
+2012 42000 nodes
+2012 YARN
+
+2009 UC Berkeley. 2010 open sourced, 2013 ASF. 2014 top level.
+
 
 2006 Cutting went to Yahoo.
 Hadoop separated out from Nutch.
@@ -72,6 +104,9 @@ Side note: 其實hadoop其中一個很有價值的應用是做BI
 * HPC
 * RDBMS
 * hadoop
+
+[historyofhadoop]: https://medium.com/@markobonaci/the-history-of-hadoop-68984a11704
+
 
 
 大數據工程師的核心技能指標
