@@ -1,32 +1,5 @@
-什麼是大數據
-==========
-
-這幾年來大數據非常的熱門，到處都有大數據分析的演講。
-演講內容通常是宣傳各種大數據分析成功的案例。
-但實際上大數據該怎麼做呢？
-大部份的討論似乎都僅止於怎麼蒐集大量的數據，
-然後用個工具（hadoop/spark）後就會馬上變出商機和錢來。
-
-筆者是工程師而非技術或平台傳教者，我想用務實一點的方式來看待大數據。
-大數據技術最重要的核心在於如何設計可以高性能處理大量數據的程式 (highly scalable programs.) [^1]
-
-目前大數據相關工作可以粗分幾類。有資料系統串接者，
-設計大數據演算法實做的人，以及管理大型叢集 (cluster) 的工程師。
-很多人對大數據工程師的理解還停留在資料系統串接者的程度，
-以為只要將資料匯入某個神奇系統，就能將自己想要的結果生出來。
-但實際上數據量變得很大時，我們往往需要自己客制化自己的資料系統，並且撰寫特殊的演算法處理之。
-以台灣和美國業界而言，第二種工程師是最稀少也需求量最高的。
-這本書的目的就是由淺入深的介紹如何成為此類型的工程師。
-
-有些人可能會有點意外，為什麼資料科學家不在其列？
-因為其實資料科學從一開始就是和大數據獨立的概念。
-而且一般而言大多數資料工程師處理的數據量也偏小，使用的演算法也多是 $$O(N^2)$$ 以上的複雜度。
-閱讀本章之後，請不要再把「大數據分析」一詞掛在口中了。
-只有非常少數能同時精通大數據演算法設計及資料科學的人，才有資格用到這個字。
-
-
 數據處理簡史
-----------
+==========
 
 不知道在學習大數據的讀者們有沒有想過，超級電腦的發明是1960年代的事，
 為什麼直到近年大數據才紅起來？任何科技及技術都有其歷史脈絡，
@@ -49,13 +22,13 @@
 與此相對的硬體設計也完全不同。HPC的硬體叫做blade，硬碟很小，但CPU、記憶體、主機板通通都是高檔貨；
 大數據的硬體則通常要求每台主機都要有很大的硬碟，使得很多資料不需要在網路中傳輸，可以在本機計算就在本機計算。
 
-### 大數據技術架構的起源
+## 大數據技術架構的起源
 
 以下內容節錄並翻譯自 [The history of hadoop][historyofhadoop] 。
 原作者有跟最早的hadoop開發者 Doug Cutting 求證過細節，而且得到他的背書！
 
 一切源自於 Doug Cutting 在 1997 年開始的搜尋引擎專案 [Lucene](https://lucene.apache.org/core/) 。
-Lucene 在 2000 年開放原始碼，並在 2001 年變成 ASF (Apache Software Foundation)[^2] 的專案。
+Lucene 在 2000 年開放原始碼，並在 2001 年變成 ASF (Apache Software Foundation)[^1] 的專案。
 直至今日，許多熱門的搜尋引擎實做 [Apache Solr](http://www.apache.org),
 [Elastic search](https://www.elastic.co) 的底層都還是使用 Lucene 。
 不過在一開始的時候 Lucene 只能搜尋很少的東西，而且也只能在一台機器上跑。
@@ -68,7 +41,7 @@ Nutch 是網路爬蟲，使用 Nutch 爬下整個世界的網站，再使用 Luc
 當年他們能建檔的網頁的上限是一億 (100M)，而且只能在一台三千美金的機器上面跑。
 如何處理大量的數據變成當時他們最迫切需要解決得問題。
 
-### HDFS (Hadoop Distributed File System) 的起源
+### HDFS (Hadoop Distributed File System) 誕生
 
 為了使 Nutch 能夠處理更多資料，Cutting 與 Cafarella 開始思考多台機器的儲存方案。
 這儲存方案必須要符合以下的需求：
@@ -91,54 +64,48 @@ Nutch 是網路爬蟲，使用 Nutch 爬下整個世界的網站，再使用 Luc
 
 ### Map Reduce
 
+有了分散式儲存技術還不夠。 Cutting 等人當時苦思如何善用手上硬體來進行平行化計算。
+儘管當年MPI等HPC平行計算技術已經成熟，但卻主要用於小量快速資料傳輸。
+在2004年 Google 又發表了一篇 Map Reduce 的 paper 。
+這個平行計算的抽象化非常的通用，從網頁的權重計算、字詞分析、到網路流量的分析等都可以通用。
+本書會以這個概念為主軸介紹如何設計出一系列的演算方式來解決大數據的問題。
 
-GFS 2003
-Google MR 2004
+2005 年七月， Cutting 宣布 Nutch 改寫以 Map Reduce 作為其建檔的計算引擎。
 
+### Hadoop 出生
 
-2005 MR is part of Nutch
-2006 Jan aquired into yahoo
-2006 Feb, becomes hadoop
-2007 Yahoo! reported to use 1000 nodes.
+2006 年六月， Cutting 將 NDFS 及 Map Reduce 從 Nutch 專案中抽出來，
+放在 Lucene 的子專案下，並重新命名為 Hadoop。
 
-2008. Hadoop separated out from Lucene.
-many sub projects appears
-Coudera was born.
+大約在同時間， Yahoo! 以 Eric Baldeschwieler
+為首的團隊正在努力研究下一世代的 Yahoo 搜尋技術。
+他們相中 Cutting 的 GFS/MapReduce 實做，
+並且大膽的決定要以這個 prototype 在未來取代他們當年的搜尋引擎實做。
+就在那年 Baldeschwieler 將 Cutting 納入團隊。
 
-2009 Amazon elastic MR
+2007 及 2008 年有許多公司前仆後繼的加入 hadoop 的開發，包括
+Twitter, Facebook, LinkedIn 等等。而在 2008 年時 Hadoop
+從 Lucene 專案中切開來，成為自己獨立的專案。許多衍伸的專案也在
+2008 年時加入 Hadoop 家族，如 Yahoo! pig, Facebook Hive,
+ZooKeeper, HBase 等等。
 
-2010 Hortonworks
-2012 Yahoo! 42000 nodes
-2012 YARN
+之後重要的 Hadoop 編年史：
 
-2009 UC Berkeley. 2010 open sourced, 2013 ASF. 2014 top level.
+* 2008 Cloudera 成立
+* 2009 Amazon elastic MR 誕生
+* 2010 Hortonworks 從 Yahoo! 拆分出來成為新公司
+* 2010 UC Berkeley open sourced Spark
+* 2012 YARN 誕生
+* 2012 Yahoo! 宣布他們的叢集達到 42000 nodes，為當時最大的 Hadoop 叢集
+* 2014 Spark 成為 ASF top level project。並開始獲得大量的關注
 
+### Side note:
+其實 Hadoop 其中一個很有價值的應用是做 BI (Business Intelligence)。
+但它的設計架構一開始並不是針對BI起家的，而是更貼近於搜尋引擎建立索引這樣的工作。
+在 BI 中最關鍵的事是處理時間序列的資料，資料清理，以及資料整合 (data join)。
+以筆者個公司來說，就必須客制非常多的架構來讓它變得更適合 BI。
+儘管 pig/hive 等上層工具一部分目的也是使其更容易操作 BI 。
 
-2006 Cutting went to Yahoo.
-Hadoop separated out from Nutch.
-
-Side note: 其實hadoop其中一個很有價值的應用是做BI
-但它的設計架構一開始並不是針對BI起家的
-以筆者個公司來說，就必須寫非常多的架構來讓它變得更適合BI
-
-
-
-
-* HPC
-* RDBMS
-* hadoop
 
 [historyofhadoop]: https://medium.com/@markobonaci/the-history-of-hadoop-68984a11704
-
-
-
-大數據工程師的核心技能指標
--------------------
-
-
-大數據工程技能樹該如何點？
-----------------------
-
-
-[^1]: 又另譯高延展性程式
-[^2]: Apache Software Foundation http://www.apache.org
+[^1]: Apache Software Foundation http://www.apache.org
